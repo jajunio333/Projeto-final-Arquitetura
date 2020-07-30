@@ -219,29 +219,51 @@ int BasicCPU::decodeDataProcReg() {
 	//		que aparece na linha 40 de isummation.S e no endereço 0x74
 	//		de txt_isummation.o.txt.
 	
-	int n, d, imm;
+	int n, m, shift, imm6;
 	
 	/* Add/subtract (immediate) (pp. 233-234)
 		This section describes the encoding of the Add/subtract (immediate)
 		instruction class. The encodings in this section are decoded from
 		Data Processing -- Immediate on page C4-232.
 	*/
-	switch (IR & 0xFF800000)
+	switch (IR & 0x7F200000)
 	{
 		case 0x0B000000:
-			//1 1 0 SUB (immediate) - 64-bit variant on page C6-1199
 			
-			if (IR & 0x00400000) return 1; // sh = 1 não implementado
-			
+			// IR & 80000000 para sf 64 bits
+
 			// ler A e B
+			//Só pra registrador W
+
 			n = (IR & 0x000003E0) >> 5;
 			if (n == 31) {
 				A = SP;
 			} else {
-				A = getW(n); // 64-bit variant
+				A = getW(n); // 32-bit variant, sem implementação para 64-bits ainda
 			}
-			// imm = (IR & 0x003FFC00) >> 10;
-			B = getW(n-1);
+
+			m = (IR & 0x001F0000) >> 16;
+			B = getW(m);
+
+			shift = (IR & 0x00C00000) >> 22;
+			imm6  = (IR & 0x0000FC00) >> 10;
+
+			// Não conseguimos testar o funcionamento do shift por não entender como mudar 
+			// as instruções de maneira direta
+			
+			switch (shift)
+			{
+			case 0:
+				B = B << imm6;
+				break;
+			case 1:
+				B = ((unsigned long)B) >> imm6;
+				break;
+			case 2:
+				B = ((signed long)B) >> imm6;
+			default:
+				break;
+			}
 
 			// atribuir ALUctrl
 			ALUctrl = ALUctrlFlag::ADD;
