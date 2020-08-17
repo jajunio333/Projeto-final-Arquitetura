@@ -114,11 +114,14 @@ int BasicCPU::ID()
 	{
 		//100x Data Processing -- Immediate
 		case 0x10000000: // x = 0
-		case 0x12000000: // x = 1
+		case 0x12000000:// x = 1
 			fpOP = false;
 			return decodeDataProcImm();
 			break;
 		// case TODO
+		case 0x0A000000:
+			return decodeDataProcReg();
+			break;
 		// x101 Data Processing -- Register on page C4-278
 		default:
 			return 1; // instrução não implementada
@@ -231,9 +234,83 @@ int BasicCPU::decodeDataProcReg() {
 	//		que aparece na linha 40 de isummation.S e no endereço 0x74
 	//		de txt_isummation.o.txt.
 	
+	int n, m, shift, imm6, d;
 	
-	// instrução não implementada
-	return 1;
+	/* Add/subtract (immediate) (pp. 233-234)
+		This section describes the encoding of the Add/subtract (immediate)
+		instruction class. The encodings in this section are decoded from
+		Data Processing -- Immediate on page C4-232.
+	*/
+	switch (IR & 0x7F200000)
+	{
+		case 0x0B000000:
+			
+			// IR & 80000000 para sf 64 bits
+
+			// ler A e B
+			//Só pra registrador W
+
+			n = (IR & 0x000003E0) >> 5;
+			if (n == 31) {
+				A = SP;
+			} else {
+				A = getW(n); // 32-bit variant, sem implementação para 64-bits ainda
+			}
+
+			m = (IR & 0x001F0000) >> 16;
+			B = getW(m);
+
+			shift = (IR & 0x00C00000) >> 22;
+			imm6  = (IR & 0x0000FC00) >> 10;
+
+			// Não conseguimos testar o funcionamento do shift por não entender como mudar 
+			// as instruções de maneira direta
+			 
+			switch (shift)
+			{
+			case 0:
+				B = B << imm6;
+				break;
+			case 1:
+				B = ((unsigned long)B) >> imm6;
+				break;
+			case 2:
+				B = ((signed long)B) >> imm6;
+			default:
+				break;
+			}
+
+			// atribuir ALUctrl
+			ALUctrl = ALUctrlFlag::ADD;
+			
+			// ATIVIDADE FUTURA: implementar informações para os estágios
+			// MEM e WB.
+
+						// registrador destino
+			d = (IR & 0x0000001F);
+			if (d == 31) {
+				Rd = &SP;
+			} else {
+				Rd = &(R[d]);
+			}
+			
+			// atribuir ALUctrl
+			ALUctrl = ALUctrlFlag::SUB;
+			
+			// atribuir MEMctrl
+			MEMctrl = MEMctrlFlag::MEM_NONE;
+			
+			// atribuir WBctrl
+			WBctrl = WBctrlFlag::RegWrite;
+			
+			// atribuir MemtoReg
+			MemtoReg = false;
+
+			return 0;
+		default:
+			// instrução não implementada
+			return 1;
+	}
 }
 
 /**
@@ -321,7 +398,25 @@ int BasicCPU::MEM()
 	// acesso à memória de dados.
 	// não implementado
 
-	return 1;
+	    switch (MEMctrl) {
+
+    case MEMctrlFlag::READ32:
+        MDR = memory->readData32(ALUout);
+        return 0;
+    case MEMctrlFlag::WRITE32:
+        memory->writeData32(ALUout,*Rd);
+        return 0;
+    case MEMctrlFlag::READ64:
+        MDR = memory->readData64(ALUout);
+        return 0;
+    case MEMctrlFlag::WRITE64:
+        memory->writeData64(ALUout,*Rd);
+        return 0;
+    default:
+        return 0;
+}
+    // não implementado
+    return 1;
 }
 
 
@@ -338,9 +433,20 @@ int BasicCPU::WB()
 	// Implementar o switch (WBctrl) case WBctrlFlag::XXX com as
 	// atribuições corretas do registrador destino, quando houver, ou
 	// return 0 no caso WBctrlFlag::WB_NONE.
-	
-	// não implementado
-	return 1;
+	switch (WBctrl) {
+        case WBctrlFlag::WB_NONE:
+            return 0;
+        case WBctrlFlag::RegWrite:
+            if (MemtoReg) {
+                *Rd = MDR;
+            } else {
+                *Rd = ALUout;
+            }
+            return 0;
+        default:
+            // não implementado
+            return 1;
+    }
 }
 
 

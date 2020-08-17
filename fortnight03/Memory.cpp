@@ -6,11 +6,11 @@
 
     (PT) armethyst - Um simulador ARM simples escrito em C++ para o ensino de
     Arquitetura de Computadores. Software livre licenciado pela MIT License
-    (veja a licença, em inglês, abaixo).
+    (veja a licenï¿½a, em inglï¿½s, abaixo).
 
     (EN) MIT LICENSE:
 
-    Copyright 2020 André Vital Saúde
+    Copyright 2020 Andrï¿½ Vital Saï¿½de
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -51,10 +51,10 @@ Memory::~Memory()
 }
 
 /**
- * Lê uma instrução de 32 bits considerando um endereçamento em bytes.
+ * Lï¿½ uma instruï¿½ï¿½o de 32 bits considerando um endereï¿½amento em bytes.
  *
- * Nesta versão, Memory.cpp implementa a arquitetura de Von Neumman, com apenas uma
- * memória, que armazena instruções e dados.
+ * Nesta versï¿½o, Memory.cpp implementa a arquitetura de Von Neumman, com apenas uma
+ * memï¿½ria, que armazena instruï¿½ï¿½es e dados.
  */
 int Memory::readInstruction32(unsigned long address)
 {
@@ -62,43 +62,43 @@ int Memory::readInstruction32(unsigned long address)
 }
 
 /**
- * Lê um dado de 32 bits considerando um endereçamento em bytes.
+ * Lï¿½ um dado de 32 bits considerando um endereï¿½amento em bytes.
  */
 int Memory::readData32(unsigned long address)
 {
 	//TODO
-	return 0;
+	return ((int*)data)[address >> 2];
 }
 
 /**
- * Lê um dado de 64 bits considerando um endereçamento em bytes.
+ * Lï¿½ um dado de 64 bits considerando um endereï¿½amento em bytes.
  */
 long Memory::readData64(unsigned long address)
 {
 	//TODO
-	return 0;
+	return ((long*)data)[address >> 3];
 }
 
 /**
- * Escreve um dado (value) de 32 bits considerando um endereçamento em bytes.
+ * Escreve um dado (value) de 32 bits considerando um endereï¿½amento em bytes.
  */
 void Memory::writeData32(unsigned long address, int value)
 {
 	//TODO
-	return;
+    ((int*)data)[address >> 2] = value;
 }
 
 /**
- * Escreve um dado (value) de 64 bits considerando um endereçamento em bytes.
+ * Escreve um dado (value) de 64 bits considerando um endereï¿½amento em bytes.
  */
 void Memory::writeData64(unsigned long address, long value)
 {
 	//TODO
-	return;
+	((long*)data)[address >> 3] = value;
 }
 
 /**
- * carrega arquivo binário na memória
+ * carrega arquivo binï¿½rio na memï¿½ria
  */
 void Memory::loadBinary(string filename)
 {
@@ -121,7 +121,7 @@ void Memory::loadBinary(string filename)
 
 
 /**
- * Escreve arquivo binario em um arquivo legível
+ * Escreve arquivo binario em um arquivo legï¿½vel
  */
 #define LINE_SIZE 4
 void Memory::writeBinaryAsText (string basename) {
