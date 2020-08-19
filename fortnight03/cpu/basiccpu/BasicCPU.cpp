@@ -234,8 +234,8 @@ int BasicCPU::decodeDataProcReg() {
 	//		que aparece na linha 40 de isummation.S e no endereço 0x74
 	//		de txt_isummation.o.txt.
 	
-	int n, m, shift, imm6, d;
-	
+	unsigned int n, m, shift, imm6, d;
+	unsigned long int* Rd;
 	/* Add/subtract (immediate) (pp. 233-234)
 		This section describes the encoding of the Add/subtract (immediate)
 		instruction class. The encodings in this section are decoded from
