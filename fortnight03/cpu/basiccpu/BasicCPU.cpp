@@ -295,7 +295,7 @@ int BasicCPU::decodeDataProcReg() {
 			}
 			
 			// atribuir ALUctrl
-			ALUctrl = ALUctrlFlag::SUB;
+			ALUctrl = ALUctrlFlag::ADD;
 			
 			// atribuir MEMctrl
 			MEMctrl = MEMctrlFlag::MEM_NONE;
@@ -311,6 +311,8 @@ int BasicCPU::decodeDataProcReg() {
 			// instrução não implementada
 			return 1;
 	}
+	// instrução não implementada
+	return 1;
 }
 
 /**
