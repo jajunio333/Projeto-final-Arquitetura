@@ -119,7 +119,9 @@ int BasicCPU::ID()
 			return decodeDataProcImm();
 			break;
 		// case TODO
-		case 0x0A000000:
+		case 0x0A000000: 
+		case 0x1A000000:
+			fpOP = false;
 			return decodeDataProcReg();
 			break;
 		// x101 Data Processing -- Register on page C4-278
@@ -282,7 +284,7 @@ int BasicCPU::decodeDataProcReg() {
 				B = ((unsigned long)B) >> imm6;
 				break;
 			case 2:
-				B = ((signed long)B) >> imm6;
+				B = ((signed long)B) >> imm6; //VARIAVEL FOI CONVERTIDA 'CASTING'
 			default:
 				break;
 			}
