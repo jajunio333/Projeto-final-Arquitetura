@@ -29,18 +29,18 @@ summ:
 	.global	main
 	.type	main, %function
 main:
-	sub	sp, sp, #16
+	sub	sp, sp, #16 // Instrução 0040 txt_insummation (Instrução "17")
 	str	wzr, [sp, 12]
 	b	.L2
 .L3:
 	adrp	x0, v
 	add	x0, x0, :lo12:v
-	ldrsw	x1, [sp, 12]
+	ldrsw	x1, [sp, 12] // INstrução ("22") 0050 
 	ldr	w1, [x0, x1, lsl 2]
 	adrp	x0, summ
 	add	x0, x0, :lo12:summ
 	ldr	w0, [x0]
-	add	w1, w1, w0
+	add	w1, w1, w0 // Instrução ("27") 0068
 	adrp	x0, summ
 	add	x0, x0, :lo12:summ
 	str	w1, [x0]

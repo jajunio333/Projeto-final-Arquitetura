@@ -100,7 +100,7 @@ int BasicCPU::ID()
 	//		Acrescente os cases no switch já iniciado, para detectar o grupo
 	//		APENAS PARA A INSTRUÇÃO A SEGUIR:
 	//				'add w1, w1, w0'
-	//		que aparece na linha 40 de isummation.S e no endereço 0x74
+	//		que aparece na linha 40 de isummation.S e no endereço 0x74 (0x68)
 	//		de txt_isummation.o.txt.
 	//
 	// 		Deve-se detectar em IR o grupo da qual a instrução faz parte e
@@ -123,6 +123,13 @@ int BasicCPU::ID()
 			return decodeDataProcReg();
 			break;
 		// x101 Data Processing -- Register on page C4-278
+		case 0x1C000000: //0001 1100 ....
+		case 0x0C000000: //0000 1100 ....
+		case 0x08000000: //0000 1000 ....
+		case 0x18000000: //0001 1000 ....
+			return decodeLoadStore();
+			break;
+			// x1x0 Loads and Stores on page C4-246
 		default:
 			return 1; // instrução não implementada
 	}

@@ -116,11 +116,11 @@ int BasicCPU::ID()
 		case 0x10000000: // x = 0
 		case 0x12000000:// x = 1
 			fpOP = false;
-			return decodeDataProcImm();
+			return decodeDataProcImm(); //SUB
 			break;
 		// case TODO
 		case 0x0A000000:
-			return decodeDataProcReg();
+			return decodeDataProcReg(); //ADD
 			break;
 		// x101 Data Processing -- Register on page C4-278
 		default:
