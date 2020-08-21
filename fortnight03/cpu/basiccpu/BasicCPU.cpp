@@ -224,6 +224,75 @@ int BasicCPU::decodeBranches() {
  *		   1: se a instrução não estiver implementada.
  */
 int BasicCPU::decodeLoadStore() {
+	unsigned int n, d, t;
+	int imm;
+
+	switch (IR & 0xFFC00000) {
+	
+	case 0xB9800000://LDRSW C6.2.131 Immediate (Unsigned offset) 913
+		// como � escrita em 64 bits, n�o h� problema em decodificar
+
+		n = (IR & 0x000003E0) >> 5;
+			if (n == 31) {
+				A = SP;
+			} else {
+				A = getX(n); // 64-bit variant
+			}
+
+		B = (IR & 0x003ffc00) >> 8; // immediate
+		//t = (IR & 0x0000001F;)
+		Rd = &(R[IR & 0x0000001F]);  
+
+		ALUctrl = ALUctrlFlag::ADD;
+				
+				// atribuir MEMctrl
+				MEMctrl = MEMctrlFlag::READ32;
+				
+				// atribuir WBctrl
+				WBctrl = WBctrlFlag::RegWrite;
+				
+				// atribuir MemtoReg
+				MemtoReg = false;
+				return 0;
+		break;
+
+	case 0xB9000000://STR C6.2.257 Unsigned offset 1135
+			// ler A e B
+		n = (IR & 0x000003E0) >> 5;
+			if (n == 31) {
+				A = SP;
+			} else {
+				A = getX(n); // 64-bit variant
+			}
+
+		B = ((IR & 0x003FFC00) >> 10) << 2; //offset = imm12 << scale. scale == size
+
+		d = (IR & 0x0000001F);
+			if (d == 31) {
+				Rd = &SP;
+			} else {
+				Rd = &(R[d]);
+			}
+
+		// atribuir ALUctrl
+				ALUctrl = ALUctrlFlag::ADD;
+				
+				// atribuir MEMctrl
+				MEMctrl = MEMctrlFlag::WRITE32;
+				
+				// atribuir WBctrl
+				WBctrl = WBctrlFlag::WB_NONE;
+				
+				// atribuir MemtoReg
+				MemtoReg = false;
+
+				return 0;
+				break;
+		default:
+			// instrução não implementada
+			return 1;
+	}
+
 	// instrução não implementada
 	return 1;
 }

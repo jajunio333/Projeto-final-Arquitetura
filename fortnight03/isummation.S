@@ -35,15 +35,15 @@ main:
 .L3:
 	adrp	x0, v
 	add	x0, x0, :lo12:v
-	ldrsw	x1, [sp, 12] // INstrução ("22") 0050 
+	ldrsw	x1, [sp, 12]  	// Instrução ("22") 0054
 	ldr	w1, [x0, x1, lsl 2]
 	adrp	x0, summ
 	add	x0, x0, :lo12:summ
-	ldr	w0, [x0]
-	add	w1, w1, w0 // Instrução ("27") 0068
+	ldr	w0, [x0]			// Instrução ("26") 0064 [B9400000]
+	add	w1, w1, w0 			// Instrução ("27") 0068
 	adrp	x0, summ
 	add	x0, x0, :lo12:summ
-	str	w1, [x0]
+	str	w1, [x0] 			// Instrução ("30") 0074 [B9000001]
 	ldr	w0, [sp, 12]
 	add	w0, w0, 1
 	str	w0, [sp, 12]
