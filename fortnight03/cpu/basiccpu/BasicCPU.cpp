@@ -288,11 +288,53 @@ int BasicCPU::decodeLoadStore() {
 
 				return 0;
 				break;
-		default:
+
+		//default:
 			// instrução não implementada
-			return 1;
+			//return 1;
 	}
 
+
+	switch (IR & 0xFFE0FC00) {
+		//1111 1111 1110 0000 1111 1100 0000 0000
+	case 0xB8607800://LDR (Register) C6.2.121 891
+
+			// ler A e B
+		n = (IR & 0x000003E0) >> 5;
+			if (n == 31) {
+				A = SP;
+			} else {
+				A = getX(n); // 64-bit variant
+			}
+
+
+		n = (IR & 0x001F0000) >> 16;
+		if (n == 31) {
+			B = SP << 2;
+		}
+		else {
+			B = getX(n) << 2;// como eu considero no and as "variaveis" como 1, so vai entrar nesse case se for: size 10, option 011 e s 1
+		}
+
+		d = IR & 0x0000001F;
+		Rd = &(R[d]);
+
+		// atribuir ALUctrl
+				ALUctrl = ALUctrlFlag::ADD;
+				
+				// atribuir MEMctrl
+				MEMctrl = MEMctrlFlag::READ32;
+				
+				// atribuir WBctrl
+				WBctrl = WBctrlFlag::RegWrite;
+				
+				// atribuir MemtoReg
+				MemtoReg = false;
+
+		return 0;
+		break;
+	}
+	
 	// instrução não implementada
 	return 1;
 }
