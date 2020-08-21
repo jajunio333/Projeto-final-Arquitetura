@@ -47,10 +47,17 @@ void BasicCPUTest::setSP(long address) {
 	SP = address;
 }
 
-unsigned long * BasicCPUTest::getSPAddr() {
+void BasicCPUTest::resetFlags() {
+	ALUctrl = ALUctrlFlag::ALU_UNDEF;
+	fpOP = false;
+	MEMctrl = MEMctrlFlag::MEM_UNDEF;
+	WBctrl = WBctrlFlag::WB_UNDEF;
+}
+	
+/* unsigned long * BasicCPUTest::getSPAddr() {
 	return &SP;
 }
-
+ */
 int BasicCPUTest::getIR() {
 	return IR;
 }
@@ -101,4 +108,8 @@ int BasicCPUTest::runEXI() {
 
 int BasicCPUTest::runWB() {
 	return WB();
+}
+
+unsigned long BasicCPUTest::getRd() {
+	return *Rd;
 }
