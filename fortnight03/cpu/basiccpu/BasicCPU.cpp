@@ -253,7 +253,8 @@ int BasicCPU::decodeLoadStore() {
 				
 				// atribuir MemtoReg
 				MemtoReg = false;
-				return 0;
+		
+		return 0;
 		break;
 
 	case 0xB9000000://STR C6.2.257 Unsigned offset 1135
@@ -286,12 +287,45 @@ int BasicCPU::decodeLoadStore() {
 				// atribuir MemtoReg
 				MemtoReg = false;
 
-				return 0;
-				break;
+		return 0;
+		break;
 
 		//default:
 			// instrução não implementada
 			//return 1;
+
+		case 0xB9400000://LDR C6.2.119 Immediate (Unsigned offset) 886 
+			//32 bits
+		n = (IR & 0x000003E0) >> 5;
+			if (n == 31) {
+				A = SP;
+			} else {
+				A = getX(n); // 64-bit variant
+			}
+
+			B = ((IR & 0x003FFC00) >> 10) << 2;
+
+		d = (IR & 0x0000001F);
+			if (d == 31) {
+				Rd = &SP;
+			} else {
+				Rd = &(R[d]);
+			}
+
+		// atribuir ALUctrl
+				ALUctrl = ALUctrlFlag::ADD;
+				
+				// atribuir MEMctrl
+				MEMctrl = MEMctrlFlag::READ32;
+				
+				// atribuir WBctrl
+				WBctrl = WBctrlFlag::RegWrite;
+				
+				// atribuir MemtoReg
+				MemtoReg = false;
+
+		return 0;
+		break;
 	}
 
 
