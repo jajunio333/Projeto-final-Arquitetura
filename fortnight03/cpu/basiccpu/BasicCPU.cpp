@@ -252,7 +252,7 @@ int BasicCPU::decodeLoadStore() {
 				WBctrl = WBctrlFlag::RegWrite;
 				
 				// atribuir MemtoReg
-				MemtoReg = false;
+				MemtoReg = true; 
 		
 		return 0;
 		break;
@@ -322,7 +322,7 @@ int BasicCPU::decodeLoadStore() {
 				WBctrl = WBctrlFlag::RegWrite;
 				
 				// atribuir MemtoReg
-				MemtoReg = false;
+				MemtoReg = true;
 
 		return 0;
 		break;
@@ -363,7 +363,7 @@ int BasicCPU::decodeLoadStore() {
 				WBctrl = WBctrlFlag::RegWrite;
 				
 				// atribuir MemtoReg
-				MemtoReg = false;
+				MemtoReg = true;
 
 		return 0;
 		break;
