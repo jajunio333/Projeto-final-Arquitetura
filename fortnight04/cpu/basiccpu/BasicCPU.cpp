@@ -131,7 +131,12 @@ int BasicCPU::ID()
 		case 0x18000000: //0001 1000 ....
 			return decodeLoadStore();
 			break;
-			// x1x0 Loads and Stores on page C4-246
+			// 101x Loads and Stores on page C4-237
+		case 0x14000000: //0001 0100 ....
+		case 0x16000000: //0001 0110 ....
+			return decodeBranches();
+			break;
+
 		default:
 			return 1; // instrução não implementada
 	}
@@ -212,6 +217,16 @@ int BasicCPU::decodeDataProcImm() {
  *		   1: se a instrução não estiver implementada.
  */
 int BasicCPU::decodeBranches() {
+	long imm, offset;
+
+	switch (IR & 0xFC000000){
+
+		case 0x14000000:
+		imm = (IR & 0x03FFFFFF);
+		offset = imm << 2;
+		PC = PC + offset;
+		return 0;
+	}
 	// instrução não implementada
 	return 1;
 }
@@ -246,7 +261,7 @@ int BasicCPU::decodeLoadStore() {
 		ALUctrl = ALUctrlFlag::ADD;
 				
 				// atribuir MEMctrl
-				MEMctrl = MEMctrlFlag::READ32;
+				MEMctrl = MEMctrlFlag::READ64;
 				
 				// atribuir WBctrl
 				WBctrl = WBctrlFlag::RegWrite;
@@ -282,7 +297,7 @@ int BasicCPU::decodeLoadStore() {
 				MEMctrl = MEMctrlFlag::WRITE32;
 				
 				// atribuir WBctrl
-				WBctrl = WBctrlFlag::WB_NONE;
+				WBctrl = WBctrlFlag::WB_NONE;	
 				
 				// atribuir MemtoReg
 				MemtoReg = false;
@@ -416,9 +431,6 @@ int BasicCPU::decodeDataProcReg() {
 
 			shift = (IR & 0x00C00000) >> 22;
 			imm6  = (IR & 0x0000FC00) >> 10;
-
-			// Não conseguimos testar o funcionamento do shift por não entender como mudar 
-			// as instruções de maneira direta
 			 
 			switch (shift)
 			{
