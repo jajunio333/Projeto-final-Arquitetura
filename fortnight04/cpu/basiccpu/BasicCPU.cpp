@@ -217,14 +217,26 @@ int BasicCPU::decodeDataProcImm() {
  *		   1: se a instrução não estiver implementada.
  */
 int BasicCPU::decodeBranches() {
-	long imm, offset;
 
 	switch (IR & 0xFC000000){
 
 		case 0x14000000:
-		imm = (IR & 0x03FFFFFF);
-		offset = imm << 2;
-		PC = PC + offset;
+		unsigned int imm26 = IR & 0x03FFFFFF;
+		A = PC; 
+		B = (((int32_t)imm26) << 6) >> 4;
+
+			// atribuir ALUctrl
+			ALUctrl = ALUctrlFlag::ADD;
+			
+			// atribuir MEMctrl
+			MEMctrl = MEMctrlFlag::MEM_NONE;
+			
+			// atribuir WBctrl
+			WBctrl = WBctrlFlag::RegWrite;
+			
+			// atribuir MemtoReg
+			MemtoReg = false;
+		
 		return 0;
 	}
 	// instrução não implementada
