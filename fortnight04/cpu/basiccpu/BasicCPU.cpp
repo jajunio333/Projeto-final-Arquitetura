@@ -129,11 +129,13 @@ int BasicCPU::ID()
 		case 0x0C000000: //0000 1100 ....
 		case 0x08000000: //0000 1000 ....
 		case 0x18000000: //0001 1000 ....
+			fpOP = false;
 			return decodeLoadStore();
 			break;
 			// 101x Loads and Stores on page C4-237
 		case 0x14000000: //0001 0100 ....
 		case 0x16000000: //0001 0110 ....
+			fpOP = false;
 			return decodeBranches();
 			break;
 
@@ -224,12 +226,13 @@ int BasicCPU::decodeBranches() {
 		unsigned int imm26 = IR & 0x03FFFFFF;
 		A = PC; 
 		B = (((int32_t)imm26) << 6) >> 4;
+		//PC = PC + B;
 
 			// atribuir ALUctrl
 			ALUctrl = ALUctrlFlag::ADD;
 			
 			// atribuir MEMctrl
-			MEMctrl = MEMctrlFlag::MEM_NONE;
+			MEMctrl = MEMctrlFlag::WRITE32;
 			
 			// atribuir WBctrl
 			WBctrl = WBctrlFlag::RegWrite;
@@ -416,12 +419,7 @@ int BasicCPU::decodeDataProcReg() {
 	//		de txt_isummation.o.txt.
 	
 	unsigned int n, m, shift, imm6, d;
-	//unsigned long int* Rd;
-	/* Add/subtract (immediate) (pp. 233-234)
-		This section describes the encoding of the Add/subtract (immediate)
-		instruction class. The encodings in this section are decoded from
-		Data Processing -- Immediate on page C4-232.
-	*/
+
 	switch (IR & 0x7F200000)
 	{
 		case 0x0B000000:
@@ -453,18 +451,15 @@ int BasicCPU::decodeDataProcReg() {
 				B = ((unsigned long)B) >> imm6;
 				break;
 			case 2:
-				B = ((signed long)B) >> imm6; //VARIAVEL FOI CONVERTIDA 'CASTING'
+				B = ((signed long)B) >> imm6; // VARIAVEL FOI CONVERTIDA 'CASTING'
 			default:
 				break;
 			}
-
-			// atribuir ALUctrl
-			ALUctrl = ALUctrlFlag::ADD;
 			
 			// ATIVIDADE FUTURA: implementar informações para os estágios
 			// MEM e WB.
 
-						// registrador destino
+			// registrador destino
 			d = (IR & 0x0000001F);
 			if (d == 31) {
 				Rd = &SP;
@@ -576,7 +571,6 @@ int BasicCPU::MEM()
 	// Implementar o switch (MEMctrl) case MEMctrlFlag::XXX com as
 	// chamadas aos métodos corretos que implementam cada caso de
 	// acesso à memória de dados.
-	// não implementado
 
 	    switch (MEMctrl) {
 
